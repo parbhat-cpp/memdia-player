@@ -21,6 +21,7 @@ import {
   VideoTitle,
 } from "./videoDialog.style";
 import { Media } from "../../classes/Media";
+import screenfull from "screenfull";
 
 const VideoDialog = ({
   media,
@@ -71,6 +72,24 @@ const VideoDialog = ({
     }
   };
 
+  const setFullScreen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    const videoPlayer: HTMLElement = document.querySelector(
+      ".videoPlayer"
+    ) as HTMLElement;
+    const video: HTMLElement = document.querySelector(".player") as HTMLElement;
+    if (screenfull.isEnabled) {
+      video.style.height = "100%";
+      video.style.width = "auto";
+      screenfull.request(videoPlayer);
+    }
+    if (screenfull.isFullscreen) {
+      video.style.height = "";
+      video.style.width = "";
+      screenfull.exit();
+    }
+  };
+
   return (
     <>
       {!media ? (
@@ -79,11 +98,12 @@ const VideoDialog = ({
         <Dialog
           open={open}
           onClose={() => setOpen(!open)}
+          sx={{ backdropFilter: "blur(3px)" }}
           PaperProps={{
-            style: DialogStyle,
+            sx: DialogStyle,
           }}
         >
-          <Box sx={{ position: "relative" }}>
+          <Box className="videoPlayer" sx={{ position: "relative" }}>
             <ReactPlayer
               ref={videoPlayerRef}
               className="player"
@@ -123,7 +143,7 @@ const VideoDialog = ({
                     <IconButton onClick={nextVideo}>
                       <ArrowForward />
                     </IconButton>
-                    <IconButton>
+                    <IconButton onClick={setFullScreen}>
                       <OpenInFull />
                     </IconButton>
                   </ControlButtons>

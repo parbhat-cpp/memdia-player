@@ -1,45 +1,52 @@
-import { Box, styled } from "@mui/material";
 import { useAtom } from "jotai";
 import { currentOptionAtom } from "../../state-management/atom/global_state";
 import { options } from "../../constants/constant";
-
-const Container = styled(Box)({
-  display: "flex",
-  flex: "0.2",
-  background: "#f48b00",
-  height: "100vh",
-  flexDirection: "column",
-});
-
-const OptionsContainer = styled(Box)({
-  width: "100%",
-  margin: "2rem",
-  cursor: "pointer",
-  fontSize: "27px",
-  transition: "all 250ms ease",
-  color: "#f4f4f4",
-
-  "&:hover": {
-    fontSize: "36px",
-    color: "#fff",
-  },
-});
+import { useNavigate } from "react-router-dom";
+import {
+  Container,
+  ContainerBreakPoints,
+  IconOptionBreakPoints,
+  OptionsContainer,
+  OptionsContainerBreakPoints,
+  TextOptionBreakPoints,
+} from "./leftSideBar.style";
+import { Box } from "@mui/material";
+import { History, List, MusicNote, PlayArrow } from "@mui/icons-material";
 
 const LeftSideBar = () => {
+  const navigate = useNavigate();
   const [, setCurrentOption] = useAtom(currentOptionAtom);
 
   const onOptionSelected = (option: string) => {
+    if (option === "playlist" || option === "history") {
+      navigate(`/${option}`);
+      return;
+    }
     setCurrentOption(option);
   };
 
+  const getIcons = (option: string) => {
+    if (option == "videos") {
+      return <PlayArrow />;
+    } else if (option == "audios") {
+      return <MusicNote />;
+    } else if (option == "playlist") {
+      return <List />;
+    } else {
+      return <History />;
+    }
+  };
+
   return (
-    <Container>
+    <Container sx={ContainerBreakPoints}>
       {options.map((option, i) => (
         <OptionsContainer
+          sx={OptionsContainerBreakPoints}
           key={option.title + i}
           onClick={() => onOptionSelected(option.option)}
         >
-          {option.title}
+          <Box sx={TextOptionBreakPoints}>{option.title}</Box>
+          <Box sx={IconOptionBreakPoints}>{getIcons(option.option)}</Box>
         </OptionsContainer>
       ))}
     </Container>
