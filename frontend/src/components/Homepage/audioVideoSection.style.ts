@@ -4,7 +4,8 @@ export const Container = styled(Box)({
     background: "#484c4c",
     display: "grid",
     overflow: "hidden",
-    overflowY: "auto"
+    overflowY: "auto",
+    flex: "1"
 });
 
 export const ContainerBreakPoints = {

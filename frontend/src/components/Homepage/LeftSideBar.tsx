@@ -1,7 +1,6 @@
 import { useAtom } from "jotai";
 import { currentOptionAtom } from "../../state-management/atom/global_state";
 import { options } from "../../constants/constant";
-import { useNavigate } from "react-router-dom";
 import {
   Container,
   ContainerBreakPoints,
@@ -14,14 +13,9 @@ import { Box } from "@mui/material";
 import { History, List, MusicNote, PlayArrow } from "@mui/icons-material";
 
 const LeftSideBar = () => {
-  const navigate = useNavigate();
   const [, setCurrentOption] = useAtom(currentOptionAtom);
 
   const onOptionSelected = (option: string) => {
-    if (option === "playlist" || option === "history") {
-      navigate(`/${option}`);
-      return;
-    }
     setCurrentOption(option);
   };
 
