@@ -1,4 +1,4 @@
-import { Dialog } from "@mui/material";
+import { Dialog, IconButton } from "@mui/material";
 import { Media } from "../../classes/Media";
 import AudioPlayer from "react-h5-audio-player";
 import "react-h5-audio-player/lib/styles.css";
@@ -6,8 +6,13 @@ import {
   AudioDialogStyle,
   AudioLogo,
   AudioPlayerStyle,
+  AudioTitle,
+  TopBar,
+  TopBarButtons,
 } from "./audiodialog.style";
-import { Headphones } from "@mui/icons-material";
+import { Close, Headphones, Minimize } from "@mui/icons-material";
+import { useAtom } from "jotai";
+import { floatingAudioAtom } from "../../state-management/atom/global_state";
 
 const AudioDialog = ({
   media,
@@ -22,6 +27,13 @@ const AudioDialog = ({
   prevAudio: () => void;
   nextAudio: () => void;
 }) => {
+  const [, setOpenFloatingAudio] = useAtom(floatingAudioAtom);
+
+  const onMinimizeClicked = () => {
+    setOpenFloatingAudio(true);
+    setOpen(!open);
+  };
+
   return (
     <>
       {!media ? (
@@ -33,6 +45,17 @@ const AudioDialog = ({
           open={open}
           onClose={() => setOpen(!open)}
         >
+          <TopBar>
+            <AudioTitle>{media.name}</AudioTitle>
+            <TopBarButtons>
+              <IconButton onClick={onMinimizeClicked}>
+                <Minimize />
+              </IconButton>
+              <IconButton onClick={() => setOpen(!open)}>
+                <Close />
+              </IconButton>
+            </TopBarButtons>
+          </TopBar>
           <AudioLogo>
             <Headphones />
           </AudioLogo>

@@ -1,4 +1,4 @@
-import { Box, styled } from "@mui/material";
+import { Box, Typography, styled } from "@mui/material";
 
 export const AudioDialogStyle = {
     background: "#000",
@@ -15,6 +15,27 @@ export const AudioDialogStyle = {
     display: "flex",
     flexDirection: "column",
 };
+
+export const TopBar = styled(Box)({
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+    position: "absolute",
+    top: "0"
+});
+
+export const TopBarButtons = styled(Box)({
+
+});
+
+export const AudioTitle = styled(Typography)({
+    display: "flex",
+    alignItems: "center",
+    marginLeft: "15px",
+    fontSize: "14px",
+    color: "#141414",
+    letterSpacing: "1px"
+});
 
 export const AudioPlayerStyle = {
     position: "absolute",

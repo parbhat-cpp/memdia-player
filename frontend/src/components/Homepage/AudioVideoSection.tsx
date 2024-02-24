@@ -1,10 +1,10 @@
 import { useAtom } from "jotai";
 import {
   currentOptionAtom,
+  floatingAudioAtom,
   osAtom,
 } from "../../state-management/atom/global_state";
 import { useEffect, useState } from "react";
-import { options } from "../../constants/constant";
 import { Media } from "../../classes/Media";
 import {
   AudioWrapper,
@@ -16,9 +16,12 @@ import { Audiotrack, Folder, PlayCircle } from "@mui/icons-material";
 import { Typography } from "@mui/material";
 import VideoDialog from "../Video/VideoDialog";
 import AudioDialog from "../Audio/AudioDialog";
-import { ellipsis } from '../../util/functions';
+import { ellipsis } from "../../util/functions";
+import FloatingPlayer from "../FloatingAudioPlayer/FloatingPlayer";
+import Playlist from "../Playlist/Playlist";
 
-const mediaArray: Array<Media> = new Array<Media>();
+const videoArray: Array<Media> = new Array<Media>();
+const audioArray: Array<Media> = new Array<Media>();
 
 const AudioVideoSection = () => {
   const [currentOption] = useAtom(currentOptionAtom);
@@ -29,10 +32,11 @@ const AudioVideoSection = () => {
   const [currentAudio, setCurrentAudio] = useState(-1);
   const [openVideo, setOpenVideo] = useState(false);
   const [openAudio, setOpenAudio] = useState(false);
+  const [openFloatingAudio, setOpenFloatingAudio] = useAtom(floatingAudioAtom);
 
   const fetchDefaultVideos = async (os: string) => {
-    if (mediaArray.length) {
-      mediaArray.splice(0, mediaArray.length);
+    if (videoArray.length) {
+      videoArray.splice(0, videoArray.length);
       setVideos([]);
     }
     await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/video/${os}`)
@@ -49,10 +53,10 @@ const AudioVideoSection = () => {
               element.type,
               i
             );
-            mediaArray.push(newMedia);
+            videoArray.push(newMedia);
           }
         );
-        setVideos(mediaArray);
+        setVideos(videoArray);
       })
       .catch((err) => {
         console.log(err);
@@ -60,8 +64,8 @@ const AudioVideoSection = () => {
   };
 
   const fetchVideosFromDirectory = async (directoryPath: string) => {
-    if (mediaArray.length) {
-      mediaArray.splice(0, mediaArray.length);
+    if (videoArray.length) {
+      videoArray.splice(0, videoArray.length);
       setVideos([]);
     }
     await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/video/`, {
@@ -84,17 +88,17 @@ const AudioVideoSection = () => {
               element.type,
               i
             );
-            mediaArray.push(newMedia);
+            videoArray.push(newMedia);
           }
         );
-        setVideos(mediaArray);
+        setVideos(videoArray);
       })
       .catch((err) => console.log(err));
   };
 
   const fetchDefaultAudios = async (os: string) => {
-    if (mediaArray.length) {
-      mediaArray.splice(0, mediaArray.length);
+    if (audioArray.length) {
+      audioArray.splice(0, audioArray.length);
       setAudios([]);
     }
     await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/audio/${os}`)
@@ -111,10 +115,10 @@ const AudioVideoSection = () => {
               element.type,
               i
             );
-            mediaArray.push(newMedia);
+            audioArray.push(newMedia);
           }
         );
-        setAudios(mediaArray);
+        setAudios(audioArray);
       })
       .catch((err) => console.log(err));
   };
@@ -125,12 +129,9 @@ const AudioVideoSection = () => {
 
   useEffect(() => {
     setOs(navigator.platform);
-    if (currentOption === options[0].option) {
-      fetchDefaultVideos(os);
-    } else if (currentOption === options[1].option) {
-      fetchDefaultAudios(os);
-    }
-  }, [currentOption, os, setOs]);
+    fetchDefaultVideos(os);
+    fetchDefaultAudios(os);
+  }, [os, setOs]);
 
   const onVideoClicked = (videoId: number) => {
     setCurrentVideo(videoId);
@@ -176,9 +177,10 @@ const AudioVideoSection = () => {
   };
 
   return (
-    <Container sx={ContainerBreakPoints}>
-      {currentOption === "videos"
-        ? videos.map((video, i) => (
+    <>
+      <Container sx={ContainerBreakPoints}>
+        {currentOption === "videos" ? (
+          videos.map((video, i) => (
             <VideoContainer>
               {video.type !== "DIRECTORY" ? (
                 <div onClick={() => onVideoClicked(i)}>
@@ -196,8 +198,8 @@ const AudioVideoSection = () => {
               <Typography>{video.name}</Typography>
             </VideoContainer>
           ))
-        : currentOption === "audios"
-        ? audios.map((audio, i) => (
+        ) : currentOption === "audios" ? (
+          audios.map((audio, i) => (
             <AudioWrapper>
               {audio.type !== "DIRECTORY" ? (
                 <div onClick={() => onAudioClicked(i)}>
@@ -215,22 +217,34 @@ const AudioVideoSection = () => {
               <Typography>{ellipsis(audio.name)}</Typography>
             </AudioWrapper>
           ))
-        : ""}
-      <VideoDialog
-        media={videos[currentVideo]}
-        open={openVideo}
-        setOpen={onVideoClose}
-        prevVideo={handleVideoPrev}
-        nextVideo={handleVideoNext}
-      />
-      <AudioDialog
-        media={audios[currentAudio]}
-        open={openAudio}
-        setOpen={setOpenAudio}
-        prevAudio={handleAudioPrev}
-        nextAudio={handleAudioNext}
-      />
-    </Container>
+        ) : currentOption === "playlist" ? (
+          <Playlist />
+        ) : (
+          <>history</>
+        )}
+        <VideoDialog
+          media={videos[currentVideo]}
+          open={openVideo}
+          setOpen={onVideoClose}
+          prevVideo={handleVideoPrev}
+          nextVideo={handleVideoNext}
+        />
+        <AudioDialog
+          media={audios[currentAudio]}
+          open={openAudio}
+          setOpen={setOpenAudio}
+          prevAudio={handleAudioPrev}
+          nextAudio={handleAudioNext}
+        />
+        <FloatingPlayer
+          media={audios[currentAudio]}
+          open={openFloatingAudio}
+          setOpen={setOpenFloatingAudio}
+          prevAudio={handleAudioPrev}
+          nextAudio={handleAudioNext}
+        />
+      </Container>
+    </>
   );
 };
 
