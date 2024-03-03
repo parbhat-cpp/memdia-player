@@ -44,6 +44,7 @@ const visible = keyframes`
   `;
 
 export const ControlsContainer = styled(Box)({
+    height: "fit-content",
     zIndex: "1",
     position: "absolute",
     top: 0,

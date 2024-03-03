@@ -105,6 +105,7 @@ const VideoDialog = ({
         >
           <Box className="videoPlayer" sx={{ position: "relative" }}>
             <ReactPlayer
+              controls
               ref={videoPlayerRef}
               className="player"
               url={`${import.meta.env.VITE_BACKEND_URL}/api/video?video_dir=${
@@ -122,7 +123,7 @@ const VideoDialog = ({
                 <Typography>{media.name}</Typography>
                 <Typography></Typography>
               </VideoTitle>
-              <ControlBar>
+              {/* <ControlBar>
                 <SliderContainer>
                   <Slider min={0} max={100} value={played * 100} />
                 </SliderContainer>
@@ -148,7 +149,7 @@ const VideoDialog = ({
                     </IconButton>
                   </ControlButtons>
                 </ButtonsContainer>
-              </ControlBar>
+              </ControlBar> */}
             </ControlsContainer>
           </Box>
         </Dialog>

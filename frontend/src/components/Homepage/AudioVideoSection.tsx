@@ -1,5 +1,6 @@
 import { useAtom } from "jotai";
 import {
+  audiosAtom,
   currentOptionAtom,
   floatingAudioAtom,
   osAtom,
@@ -27,7 +28,7 @@ const AudioVideoSection = () => {
   const [currentOption] = useAtom(currentOptionAtom);
   const [os, setOs] = useAtom(osAtom);
   const [videos, setVideos] = useState(new Array<Media>());
-  const [audios, setAudios] = useState(new Array<Media>());
+  const [audios, setAudios] = useAtom(audiosAtom);
   const [currentVideo, setCurrentVideo] = useState(-1);
   const [currentAudio, setCurrentAudio] = useState(-1);
   const [openVideo, setOpenVideo] = useState(false);
